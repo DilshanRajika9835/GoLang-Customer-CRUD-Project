@@ -57,39 +57,39 @@
             <div class="border col-12 col-sm-12 col-xl-6 col-md-12 col-xxl-6 ">
                 <form class="row g-3" id="CustomerForm">
                     <div class="col-md-12">
-                        <label for="txtNic" class="form-label" style="color: black;font-weight:bold ">Customer NIC</label>
-                        <input name="id" type="text" class="form-control" id="txtNic" placeholder="987456567V">
+                        <label for="txtNIC" class="form-label" style="color: black;font-weight:bold ">Customer NIC</label>
+                        <input name="id" type="text" class="form-control" id="txtNIC" placeholder="987456567V">
                     </div>
                     <div class="col-md-12">
                         <label for="txtName" class="form-label" style="color: black;font-weight:bold">Customer Name</label>
-                        <input name="fname" type="text" class="form-control" id="txtName"
+                        <input name="name" type="text" class="form-control" id="txtName"
                                placeholder="Dilshan Rajika"
                                required>
                     </div>
                     <div class="col-md-12">
                         <label for="txtAddress" class="form-label" style="color: black;font-weight:bold">Address</label>
-                        <input name="lname" type="text" class="form-control" id="txtAddress"
+                        <input name="address" type="text" class="form-control" id="txtAddress"
                                placeholder="No34,Galle,Panadura" required>
                     </div>
                     <div class="col-12">
-                        <label for="txtEmail" class="form-label" style="color: black;font-weight:bold">Email</label>
-                        <input name="address" type="text" class="form-control" id="txtEmail"
-                               placeholder="example@gmail.com"
+                        <label for="txtSalary" class="form-label" style="color: black;font-weight:bold">Salary</label>
+                        <input name="salary" type="number" class="form-control" id="txtSalary"
+                               placeholder="40000.00"
                                required>
                     </div>
 
                     <section class="p-2 ">
                         <div class="col-2 btn-group w-20 m-1">
-                            <button type="button" class="btn btn-primary" onclick="ClearCustomer()">Clear</button>
+                            <button type="button" class="btn btn-primary" id="btnClear" onclick="textClear()">Clear</button>
                         </div>
                         <div class="col-2 btn-group w-20 m-1">
-                            <button type="button" class="btn btn-danger" onclick="deleteCustomer()">Delete</button>
+                            <button type="button" class="btn btn-danger" id="btnDelete">Delete</button>
                         </div>
                         <div class="col-2 btn-group w-20 m-1">
-                            <button type="button" class="btn btn-warning" onclick="UpdataCustomer()">Update</button>
+                            <button type="button" class="btn btn-warning" id="btnUpdate" onclick="updateCustomer()">Update</button>
                         </div>
                         <div class="col-2 btn-group w-20 m-1 ">
-                            <button type="button" class="btn btn-success disabled" id="btnSaveCustomer" onclick="SaveCustomer()"
+                            <button type="button" class="btn btn-success " id="btnAdd"
                             >Save
                             </button>
                         </div>
@@ -108,15 +108,14 @@
                             <thead class="bg-primary table-bordered ">
                             <tr class="text-light ">
                                 <th scope="col">No</th>
-                                <th scope="col">Customer ID</th>
-                                <th scope="col">First Name</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Name</th>
                                 <th scope="col">Address</th>
-                                <th scope="col">Contact</th>
-                                <th scope="col">Email</th>
+                                <th scope="col">Salary</th>
 
                             </tr>
                             </thead>
-                            <tbody id="cust_tblbody">
+                            <tbody id="tblCustomer">
 
                             </tbody>
                         </table>
@@ -130,6 +129,29 @@
 
 <!------------------------------------------------------------------------------------------------->
 <script src="assert/js/bootstrap.js"></script>
+<script src="assert/jquery/jquery.min.js"></script>
+<script src="assert/js/customer.js"></script>
+<script>
+
+    $('#tblCustomer').on( 'click', 'tr', function () {
+        console.log("Click Me")
+        let id = $(this).children('td:eq(1)').text();
+        let name = $(this).children('td:eq(2)').text();
+        let address = $(this).children('td:eq(3)').text();
+        let salary = $(this).children('td:eq(4)').text();
+
+        $('#txtNIC').val(id);
+        $('#txtName').val(name);
+        $('#txtAddress').val(address);
+        $('#txtSalary').val(salary);
+
+        /*  document.getElementById("btnDeleteCustomer").disabled = false;
+          document.getElementById("btnUpdateCustomer").disabled = false;
+          document.getElementById("btnSaveCustomer").disabled = true;*/
+    });
+
+
+</script>
 
 </body>
 </html>

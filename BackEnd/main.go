@@ -2,163 +2,136 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
+
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"text/template"
-
-	_ "github.com/go-sql-driver/mysql"
 )
+var customers []customer
 
-type Employee struct {
-	Id    int
-	Name  string
-	City string
+type customer struct {
+	ID string `json:"id"`
+	Name string `json:"name"`
+	Address string `json:"address"`
+	Salary float32 `json:"salary"`
+
 }
 
-func dbConn() (db *sql.DB) {
-	dbDriver := "mysql"
-	dbUser := "root"
-	dbPass := "ijse"
-	dbName := "golang"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+func saveCustomer(w http.ResponseWriter, r *http.Request) {
+	setupCorsResponse(&w, r)
+	if (*r).Method == "OPTIONS" {
+		return
+	}
+	id := r.FormValue("id")
+	name :=r.FormValue("name")
+	address :=r.FormValue("address")
+	salary:=r.FormValue("salary")
+
+	db, _ := sql.Open("mysql", "root:ijse@tcp(127.0.0.1:3306)/test")
+	insert, err := db.Query("INSERT INTO customer VALUES (?, ?, ?, ?)",id,name, address,salary)
 	if err != nil {
 		panic(err.Error())
 	}
-	return db
+	defer insert.Close()
 }
+func deleteCustomer(w http.ResponseWriter, r *http.Request) {
+	setupCorsResponse(&w, r)
+	if (*r).Method == "OPTIONS" {
+		return
+	}
+	id := r.FormValue("id")
+	db, _ := sql.Open("mysql", "root:ijse@tcp(127.0.0.1:3306)/test")
+	delete, err := db.Query("delete from customer where id=?",id)
 
-var tmpl = template.Must(template.ParseGlob("form/*"))
-
-func Index(w http.ResponseWriter, r *http.Request) {
-	db := dbConn()
-	selDB, err := db.Query("SELECT * FROM Employee ORDER BY id DESC")
 	if err != nil {
 		panic(err.Error())
 	}
-	emp := Employee{}
-	res := []Employee{}
-	for selDB.Next() {
-		var id int
-		var name, city string
-		err = selDB.Scan(&id, &name, &city)
-		if err != nil {
-			panic(err.Error())
-		}
-		emp.Id = id
-		emp.Name = name
-		emp.City = city
-		res = append(res, emp)
-	}
-	tmpl.ExecuteTemplate(w, "Index", res)
-	defer db.Close()
-}
+	fmt.Println(delete)
+	defer delete.Close()
+	json.NewEncoder(w).Encode(customers)
 
-func Show(w http.ResponseWriter, r *http.Request) {
-	db := dbConn()
-	nId := r.URL.Query().Get("id")
-	selDB, err := db.Query("SELECT * FROM Employee WHERE id=?", nId)
+}
+func updateCustomer(w http.ResponseWriter, r *http.Request) {
+	setupCorsResponse(&w, r)
+	if (*r).Method == "OPTIONS" {
+		return
+	}
+	id := r.FormValue("id")
+	name :=r.FormValue("name")
+	address :=r.FormValue("address")
+	salary:=r.FormValue("salary")
+
+	db, _ := sql.Open("mysql", "root:ijse@tcp(127.0.0.1:3306)/test")
+	insert, err := db.Query("UPDATE customer set name=?,address=?,salary=? where id=?",name, address,salary,id)
 	if err != nil {
 		panic(err.Error())
 	}
-	emp := Employee{}
-	for selDB.Next() {
-		var id int
-		var name, city string
-		err = selDB.Scan(&id, &name, &city)
-		if err != nil {
-			panic(err.Error())
-		}
-		emp.Id = id
-		emp.Name = name
-		emp.City = city
+	defer insert.Close()
+}
+func allCustomer(w http.ResponseWriter, r *http.Request) {
+	var	allCustomer []customer
+	setupCorsResponse(&w, r)
+	if (*r).Method == "OPTIONS" {
+		return
 	}
-	tmpl.ExecuteTemplate(w, "Show", emp)
-	defer db.Close()
-}
+	w.Header().Set("Content-Type","application/json")
 
-func New(w http.ResponseWriter, r *http.Request) {
-	tmpl.ExecuteTemplate(w, "New", nil)
-}
-
-func Edit(w http.ResponseWriter, r *http.Request) {
-	db := dbConn()
-	nId := r.URL.Query().Get("id")
-	selDB, err := db.Query("SELECT * FROM Employee WHERE id=?", nId)
+	db, _ := sql.Open("mysql", "root:ijse@tcp(127.0.0.1:3306)/test")
+	row, err := db.Query("Select * from customer")
 	if err != nil {
 		panic(err.Error())
-	}
-	emp := Employee{}
-	for selDB.Next() {
-		var id int
-		var name, city string
-		err = selDB.Scan(&id, &name, &city)
-		if err != nil {
-			panic(err.Error())
+	}else{
+		for row.Next(){
+			var id string
+			var name string
+			var address string
+			var salary float32
+
+			err2 := row.Scan(&id, &name, &address, &salary)
+			row.Columns()
+			if err2 != nil{
+				panic(err2.Error())
+			}else{
+				custList := customer{
+					ID:id,
+					Name:name,
+					Address: address,
+					Salary: salary,
+				}
+				allCustomer = append(allCustomer, custList)
+			}
 		}
-		emp.Id = id
-		emp.Name = name
-		emp.City = city
 	}
-	tmpl.ExecuteTemplate(w, "Edit", emp)
-	defer db.Close()
-}
+	defer row.Close()
+	json.NewEncoder(w).Encode(allCustomer)
 
-func Insert(w http.ResponseWriter, r *http.Request) {
-	db := dbConn()
-	if r.Method == "POST" {
-		name := r.FormValue("name")
-		city := r.FormValue("city")
-		insForm, err := db.Prepare("INSERT INTO Employee(name, city) VALUES(?,?)")
-		if err != nil {
-			panic(err.Error())
-		}
-		insForm.Exec(name, city)
-		log.Println("INSERT: Name: " + name + " | City: " + city)
-	}
-	defer db.Close()
-	http.Redirect(w, r, "/", 301)
-}
 
-func Update(w http.ResponseWriter, r *http.Request) {
-	db := dbConn()
-	if r.Method == "POST" {
-		name := r.FormValue("name")
-		city := r.FormValue("city")
-		id := r.FormValue("uid")
-		insForm, err := db.Prepare("UPDATE Employee SET name=?, city=? WHERE id=?")
-		if err != nil {
-			panic(err.Error())
-		}
-		insForm.Exec(name, city, id)
-		log.Println("UPDATE: Name: " + name + " | City: " + city)
-	}
-	defer db.Close()
-	http.Redirect(w, r, "/", 301)
-}
 
-func Delete(w http.ResponseWriter, r *http.Request) {
-	db := dbConn()
-	emp := r.URL.Query().Get("id")
-	delForm, err := db.Prepare("DELETE FROM Employee WHERE id=?")
-	if err != nil {
-		panic(err.Error())
-	}
-	delForm.Exec(emp)
-	log.Println("DELETE")
-	defer db.Close()
-	http.Redirect(w, r, "/", 301)
 }
-
 func main() {
-	fmt.Println("Hello There")
-	log.Println("Server started on: http://localhost:8080")
-	http.HandleFunc("/", Index)
-	http.HandleFunc("/show", Show)
-	http.HandleFunc("/new", New)
-	http.HandleFunc("/edit", Edit)
-	http.HandleFunc("/insert", Insert)
-	http.HandleFunc("/update", Update)
-	http.HandleFunc("/delete", Delete)
-	http.ListenAndServe(":8080", nil)
+
+	r := mux.NewRouter()
+	fmt.Println("Server Running...")
+	r.HandleFunc("/api/customer", saveCustomer).Methods("POST","OPTIONS")
+	r.HandleFunc("/api/customer", deleteCustomer).Methods("DELETE","OPTIONS")
+	r.HandleFunc("/api/customer", updateCustomer).Methods("PUT","OPTIONS")
+	r.HandleFunc("/api/customer", allCustomer).Methods("GET","OPTIONS")
+	log.Fatal(http.ListenAndServe(":8000", r))
+
+
+}
+func setupCorsResponse(w *http.ResponseWriter, req *http.Request) {
+	allowedHeaders := "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization,X-CSRF-Token"
+
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Authorization")
+	(*w).Header().Set("Access-Control-Allow-Origin", req.Header.Get("Origin"))
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+	(*w).Header().Set("Access-Control-Allow-Headers", allowedHeaders)
+	(*w).Header().Set("Access-Control-Expose-Headers", "Authorization")
+
+
 }
