@@ -1,133 +1,85 @@
-<!DOCTYPE html>
-<html>
+
+
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Customer Save Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="assert/css/bootstrap.css">
     <link rel="stylesheet" href="assert/css/style.css">
-    <link rel="stylesheet" href="assert/css/normalize.css">
-
-    <style>
-        .form-control:disabled, .form-control[readonly] {
-            opacity: 1;
-            background-color: #66339914;
-        }
-
-        @media (min-width: 320px) and (max-width: 1082px) {
-            .table > :not(caption) > * > * {
-                padding: 0;
-                font-size: 12px;
-            }
-        }
-
-        @media (min-width: 320px) and (max-width: 530px) {
-            .table > :not(caption) > * > * {
-                padding: 0;
-                font-size: 6px;
-            }
-        }
-    </style>
+    <link rel="icon" href="assert/fav_icon.png">
 </head>
-
-<body style="overflow-x: hidden" class="A4 portrait">
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark  position-fixed  w-100 " style="z-index: 3 ;top: 0">
-    <div class="container-fluid ">
-        <a id="navhome" class="navbar-brand" href=""><img src="assert/img/customer_img.svg" alt="image" style="width: 59px"></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item" id="navCustomer">
-                    <a class="nav-link active" aria-current="page">CUSTOMER</a>
-                </li>
-
-            </ul>
-        </div>
-    </div>
-</nav>
-
-
-<!------------------------------------------------------------------------------------------------->
-<section style="position: relative;margin-top: 100px" id="dashboard">
-    <div class="container-fluid mt-5 " id="menuForm">
-        <div class="row justify-content-center p-0 ">
-            <img src="assert/img/customer_img.svg" alt="image" class="col-8 col-sm-8 col-xl-6 col-md-8 col-xxl-6  ">
-            <div class="border col-12 col-sm-12 col-xl-6 col-md-12 col-xxl-6 ">
-                <form class="row g-3" id="CustomerForm">
-                    <div class="col-md-12">
-                        <label for="txtNIC" class="form-label" style="color: black;font-weight:bold ">Customer NIC</label>
-                        <input name="id" type="text" class="form-control" id="txtNIC" placeholder="987456567V">
-                    </div>
-                    <div class="col-md-12">
-                        <label for="txtName" class="form-label" style="color: black;font-weight:bold">Customer Name</label>
-                        <input name="name" type="text" class="form-control" id="txtName"
-                               placeholder="Dilshan Rajika"
-                               required>
-                    </div>
-                    <div class="col-md-12">
-                        <label for="txtAddress" class="form-label" style="color: black;font-weight:bold">Address</label>
-                        <input name="address" type="text" class="form-control" id="txtAddress"
-                               placeholder="No34,Galle,Panadura" required>
-                    </div>
-                    <div class="col-12">
-                        <label for="txtSalary" class="form-label" style="color: black;font-weight:bold">Salary</label>
-                        <input name="salary" type="number" class="form-control" id="txtSalary"
-                               placeholder="40000.00"
-                               required>
-                    </div>
-
-                    <section class="p-2 ">
-                        <div class="col-2 btn-group w-20 m-1">
-                            <button type="button" class="btn btn-primary" id="btnClear" onclick="textClear()">Clear</button>
-                        </div>
-                        <div class="col-2 btn-group w-20 m-1">
-                            <button type="button" class="btn btn-danger" id="btnDelete">Delete</button>
-                        </div>
-                        <div class="col-2 btn-group w-20 m-1">
-                            <button type="button" class="btn btn-warning" id="btnUpdate" onclick="updateCustomer()">Update</button>
-                        </div>
-                        <div class="col-2 btn-group w-20 m-1 ">
-                            <button type="button" class="btn btn-success " id="btnAdd"
-                            >Save
-                            </button>
-                        </div>
-
-                    </section>
-
-
-                </form>
-
-            </div>
-            <section class="container-fluid">
-                <div class="row">
-                    <div class="border  ">
-                        <table class="table caption-top table-hover border" id="CustomerTable">
-                            <caption>List of Customers</caption>
-                            <thead class="bg-primary table-bordered ">
-                            <tr class="text-light ">
-                                <th scope="col">No</th>
-                                <th scope="col">ID</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Address</th>
-                                <th scope="col">Salary</th>
-
-                            </tr>
-                            </thead>
-                            <tbody id="tblCustomer">
-
-                            </tbody>
-                        </table>
-                    </div>
-
+<body>
+<header class="container-fluid bg-primary " style="border-bottom-left-radius: 5px;border-bottom-right-radius: 5px">
+    <h1 id="display" class="text-light justify-content-center align-items-center  d-flex">Customer Save Form</h1>
+</header>
+<section class="container-fluid mt-3">
+    <section class="row">
+        <div class="col-md-5">
+            <form class="row g-3" id="CustomerForm">
+                <div class="col-md-12">
+                    <label for="txtNIC" class="form-label" style="color: black;font-weight:bold ">Customer NIC</label>
+                    <input name="id" type="text" class="form-control" id="txtNIC" placeholder="987456567V">
                 </div>
-            </section>
+                <div class="col-md-12">
+                    <label for="txtName" class="form-label" style="color: black;font-weight:bold">Customer Name</label>
+                    <input name="name" type="text" class="form-control" id="txtName"
+                           placeholder="Dilshan Rajika"
+                           required>
+                </div>
+                <div class="col-md-12">
+                    <label for="txtAddress" class="form-label" style="color: black;font-weight:bold">Address</label>
+                    <input name="address" type="text" class="form-control" id="txtAddress"
+                           placeholder="No34,Galle,Panadura" required>
+                </div>
+                <div class="col-12">
+                    <label for="txtSalary" class="form-label" style="color: black;font-weight:bold">Salary</label>
+                    <input name="salary" type="number" class="form-control" id="txtSalary"
+                           placeholder="40000.00"
+                           required>
+                </div>
+
+                <section class="p-2  btn-group col-md-12">
+                    <div class="col-2 btn-group w-20 m-1">
+                        <button type="button" class="btn btn-primary" id="btnClear" onclick="textClear()">Clear</button>
+                    </div>
+                    <div class="col-2 btn-group w-20 m-1">
+                        <button type="button" class="btn btn-danger" id="btnDelete">Delete</button>
+                    </div>
+                    <div class="col-2 btn-group w-20 m-1">
+                        <button type="button" class="btn btn-warning text-light" id="btnUpdate" onclick="updateCustomer()">Update</button>
+                    </div>
+                    <div class="col-2 btn-group w-20 m-1 ">
+                        <button type="button" class="btn  btn-info text-light" id="btnSearch">Search</button>
+                    </div>
+                    <div class="col-2 btn-group w-20 m-1 ">
+                        <button type="button" class="btn btn-success text-light " id="btnAdd">Save</button>
+                    </div>
+
+                </section>
+
+
+            </form>
         </div>
-    </div>
+        <div class="col-md-7 table-customer mt-4" >
+            <table class="table table-bordered table-hover">
+                <thead class="bg-primary text-white">
+                <tr>
+                    <th scope="col">No</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Salary</th>
+                </tr>
+                </thead>
+                <tbody id="tblCustomer" style="background-color: rgba(77,87,71,0.78)">
+
+                </tbody>
+            </table>
+        </div>
+    </section>
 </section>
 
-<!------------------------------------------------------------------------------------------------->
 <script src="assert/js/bootstrap.js"></script>
 <script src="assert/jquery/jquery.min.js"></script>
 <script src="assert/js/customer.js"></script>
@@ -153,6 +105,6 @@
 
 </script>
 
+
 </body>
 </html>
-

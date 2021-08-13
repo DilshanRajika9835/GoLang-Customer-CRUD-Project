@@ -1,6 +1,19 @@
 
+let name=/^[A-z ]{5,20}$/;
+
+$("#txtName").on('keydown',function (event) {
+    if(name.test($('#txtName').val())){
+        $("#txtName").css('border','2px solid green');
+    }else if(event.key=="Enter"){
+        $('#txtAddress').focus();
+    }
+    else {
+        $("#txtName").css('border','2px solid red');
+        $('#txtName').focus();
+    }
+});
+
 function textClear (){
-        console.log("hidsfasfsadfas")
         $("#txtNIC").val("");
         $("#txtName").val("");
         $("#txtAddress").val("");
@@ -21,7 +34,7 @@ function loadAllCustomers() {
                 let name = res[i].name;
                 let address = res[i].address;
                 let salary = res[i].salary;
-                let row=`<tr> <td>${no++}</td> <td>${id}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;
+                let row=`<tr class="text-light"> <td>${no++}</td> <td>${id}</td><td>${name}</td><td>${address}</td><td>${salary}</td></tr>`;
                 $('#tblCustomer').append(row);
             }
         },
@@ -159,8 +172,36 @@ $("#btnDelete").click(function (){
         success:function (res){
             alert("the customer is removed");
             loadAllCustomers()
+            textClear()
         },
         error: function (ob, txtStatus, error) {
+            console.log(error);
+            console.log(txtStatus);
+            console.log(ob);
+        }
+    });
+});
+/*----------Search Customer---------------------------*/
+$("#btnSearch").click(function () {
+    let id = $("#txtNIC").val();
+    $.ajax({
+        method: "GET",
+        url: "http://localhost:8000/api/customer/" + id,
+        success: function (res) {
+            console.log(res);
+            let c = res.data;
+            if(res.id===id){
+                $("#txtName").val(res.name);
+                $("#txtAddress").val(res.address);
+                $("#txtSalary").val(res.salary);
+            }else {
+                alert("sorry!Customer Not found")
+                textClear()
+            }
+
+        },
+        error: function (ob, txtStatus, error) {
+            textClear()
             console.log(error);
             console.log(txtStatus);
             console.log(ob);
